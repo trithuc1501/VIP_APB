@@ -1,0 +1,19 @@
+BEGIN 3:APB_if:fast__2:work
+    PWAKEUP :  1:tb_top:fast:work
+    PADDR :  1:tb_top:fast:work
+    PNSE :  1:tb_top:fast:work
+    PSTRB :  1:tb_top:fast:work
+    PSEL :  1:tb_top:fast:work
+    PWUSER :  1:tb_top:fast:work
+    PREADY :  1:tb_top:fast:work
+    PPROT :  1:tb_top:fast:work
+    PWRITE :  1:tb_top:fast:work
+    PAUSER :  1:tb_top:fast:work
+    PWDATA :  1:tb_top:fast:work
+    PRESETn :  1:tb_top:fast:work
+    PENABLE :  1:tb_top:fast:work
+    PSLVERR :  1:tb_top:fast:work
+END 
+BEGIN 3:APB_if:fast__1:work
+    PRESETn :  1:APB_vip_pkg:fast:work
+END 

@@ -1,0 +1,42 @@
+﻿Test Case ID,Req ID,Category,Test Case Name,Description,Master Stimulus,Slave Response,Expected Result,Coverage/Assertion ID,Priority
+TC_RST_001,REQ_RST_01,Reset & Idle,Idle State Initialization,Verify signals are correctly driven to idle state after reset.,Assert PRESETn=0 then 1.,N/A,"PSEL=0, PENABLE=0 after reset sequence.",AST_IDLE_01,High
+TC_RST_002,REQ_RST_02,Reset & Idle,Mid-transaction Reset,Verify system recovery when reset occurs during SETUP or ACCESS phase.,"Start transaction, assert PRESETn=0 before PREADY=1.",Slave resets internal state.,Transaction is aborted immediately. Master/Slave return to IDLE safely.,COV_RST_01,High
+TC_BSC_001,REQ_BSC_01,Basic,Basic Single Write,Verify single write without wait states.,Drive 1 write transaction.,PREADY=1 immediately.,Data written. 2-cycle completion.,COV_WR_01,High
+TC_BSC_002,REQ_BSC_02,Basic,Basic Single Read,Verify single read without wait states.,Drive 1 read transaction.,"PREADY=1, valid PRDATA.",Data read matches. 2-cycle completion.,COV_RD_01,High
+TC_BSC_003,REQ_BSC_03,Basic,Back-to-Back Mixed,Verify continuous write/read transitions without IDLE.,Drive B2B writes and reads.,PREADY=1 immediately.,No dropped packets. PSEL remains 1.,COV_B2B_01,High
+TC_TIM_001,REQ_TIM_01,Corner Case Timing,Random Wait States,Verify master holds signals during PREADY=0.,Drive R/W transactions.,Random wait states (1-15).,Master holds PADDR/PWRITE/PWDATA stable.,COV_WAIT_01,High
+TC_TIM_002,REQ_TIM_02,Corner Case Timing,Timeout Watchdog Trigger,Verify watchdog triggers UVM_ERROR when PREADY=0 exceeds limit.,Drive transaction.,Delay PREADY beyond timeout limit (e.g. 105 cycles).,Watchdog aborts transaction and issues UVM_ERROR.,COV_WAIT_MAX,High
+TC_TIM_003,REQ_TIM_03,Corner Case Timing,Master Idle & Slave Wait Stress,Verify bus stability when Master delays SETUP and Slave delays PREADY.,Drive random idle cycles before SETUP.,Delay PREADY with random wait states.,"Data integrity maintained, SVA assertions pass.",COV_TIM_STRESS,High
+TC_ERR_001,REQ_ERR_01,Error Handling,Single PSLVERR,Verify slave error reporting.,Drive R/W.,"PREADY=1, PSLVERR=1.","Monitor captures error, Scoreboard flags it.",COV_ERR_01,High
+TC_ERR_002,REQ_ERR_02,Error Handling,Consecutive PSLVERR,Verify behavior on continuous errors.,Drive B2B R/W.,Consecutive PSLVERR=1.,"System remains stable, logs multiple errors.",COV_ERR_02,Medium
+TC_ERR_003,REQ_ERR_03,Multi-Slave,Unmapped Address Region,Verify access to unmapped address space.,Drive to undefined PADDR.,Default slave asserts PSLVERR/DECERR.,Proper error routing for unmapped access.,COV_ERR_UNMAP,High
+TC_MSL_001,REQ_MSL_01,Multi-Slave,Address Decoding,Verify transactions route to correct slave based on PADDR.,Drive diverse PADDRs.,Matching Slave responds.,Decoder asserts correct PSELx.,COV_DEC_01,High
+TC_MSL_002,REQ_MSL_02,Multi-Slave,Slave Switching,Verify B2B transactions switching between slaves.,Drive Slave 1 then Slave 2 continuously.,Slaves respond properly.,"PSEL1 deasserts, PSEL2 asserts correctly.",COV_DEC_SW,High
+TC_FEAT_001,REQ_AP4_01,APB4/5,Partial PSTRB Coverage,Verify partial byte lane masking.,Drive write with partial PSTRB.,Update only selected bytes.,Memory correctly masked. Scoreboard aligns bytes.,COV_STRB_PRT,Medium
+TC_FEAT_002,REQ_AP4_02,APB4/5,Zero PSTRB Coverage,Verify write with all PSTRB bits low (Zero Strobe).,Drive write with PSTRB=0.,"Respond normally, do not alter memory.",Memory remains unchanged. Scoreboard verifies NO write occurred.,COV_STRB_ZR,High
+TC_FEAT_003,REQ_AP4_03,APB4/5,PPROT Combinations,"Verify privileged, secure, and data/instruction accesses.",Drive all combinations of PPROT[2:0].,Respond normally.,Protocol attributes routed correctly and captured.,COV_PROT_ALL,Medium
+TC_FEAT_004,REQ_AP5_01,APB4/5,User Signals Routing,"Verify PAUSER, PWUSER, PRUSER, PBUSER propagation.",Drive random PAUSER/PWUSER signals.,Return random PRUSER/PBUSER.,All user signals captured correctly by Monitor.,COV_USR_SIG,Low
+TC_FEAT_005,REQ_AP5_02,APB4/5,Low Power PWAKEUP,Verify PWAKEUP timing (Clock Gating).,Drive PWAKEUP=1 before transaction.,Acknowledge wakeup.,PWAKEUP asserted at least 1 cycle before PSEL.,AST_WUP_01,High
+TC_AST_001,REQ_AST_01,Protocol Assertions,PENABLE Timing,Negative test: PENABLE must be 0 in SETUP.,N/A (Monitored),N/A,ASSERTION: PENABLE==0 when transitioning IDLE->SETUP.,AST_PEN_01,Critical
+TC_AST_002,REQ_AST_02,Protocol Assertions,PSEL Stability,Negative test: PSEL cannot drop during SETUP->ACCESS.,N/A (Monitored),N/A,ASSERTION: PSEL remains 1 until PREADY=1.,AST_PSEL_01,Critical
+TC_AST_003,REQ_AST_03,Protocol Assertions,Data Stability,Negative test: Master signals must not change if PREADY=0.,N/A (Monitored),N/A,"ASSERTION: PADDR, PWRITE, PWDATA, PSTRB, PPROT, PNSE, PWAKEUP, PAUSER, PWUSER stable.",AST_STAB_01,Critical
+TC_AST_004,REQ_AST_04,Protocol Assertions,PSELx Exclusivity,Negative test: No overlapping slave selects.,N/A (Monitored),N/A,ASSERTION: $onehot0(PSEL) across all slaves.,AST_EXCL_01,Critical
+TC_AST_005,REQ_AST_05,Protocol Assertions,PADDR Alignment,Negative test: Address alignment.,Drive unaligned PADDR.,Slave may assert PSLVERR.,ASSERTION/COV: PADDR is aligned to DATA_WIDTH.,AST_ALGN_01,Medium
+TC_AST_006,REQ_AST_06,Protocol Assertions,PSLVERR Timing Check,Negative test: PSLVERR only evaluated when PREADY=1.,N/A (Monitored),Assert PSLVERR while PREADY=0.,ASSERTION: PSLVERR should not be sampled/asserted active without PREADY=1.,AST_ERR_TIM,Critical
+TC_AST_007,REQ_AST_07,Protocol Assertions,Non-pipelined Protocol Check,Negative test: No outstanding transactions allowed.,N/A (Monitored),N/A,ASSERTION: Cannot start new SETUP phase before current ACCESS phase completes.,AST_NO_PIPE,Critical
+TC_AST_008,REQ_AST_08,Protocol Assertions,SETUP to ACCESS Transition,Negative test: SETUP phase must transition to ACCESS in exactly 1 cycle.,N/A (Monitored),N/A,ASSERTION: (PSEL && !PENABLE) |=> (PSEL && PENABLE),AST_SETUP_01,Critical
+TC_STR_001,REQ_STR_01,Stress & Random,Long Random Sequence,Catch rare corner cases.,"Drive 10,000+ random transactions.",Randomized responses.,"Zero functional drops, memory matches.",COV_LONG_01,High
+TC_STR_002,REQ_STR_02,Stress & Random,Randomized Reset Injection,Test system robustness under random resets.,Inject PRESETn randomly.,Varies based on timing.,System recovers properly every time.,COV_RST_RND,High
+
+--- SVA CODE REFERENCE ---,,,,,,,,,
+SVA ID,Rule Code,Description,,,,,,,
+AST_IDLE_01,$rose(PRESETn) |-> (PSEL == 1'b0 && PENABLE == 1'b0),"Checks that when reset is lifted, the bus defaults to IDLE (PSEL=0, PENABLE=0).",,,,,,,
+AST_PEN_01,$rose(PSEL) |-> (PENABLE == 1'b0),"Checks that in the first cycle of a transaction (SETUP phase), PENABLE must be 0.",,,,,,,
+AST_SETUP_01,(PSEL && !PENABLE) |=> (PSEL && PENABLE),Checks that SETUP phase transitions strictly to ACCESS phase in exactly 1 clock cycle.,,,,,,,
+AST_PSEL_01,(PSEL && PENABLE && !PREADY) |=> PSEL,Checks that PSEL is held high while waiting for Slave to assert PREADY.,,,,,,,
+AST_STAB_01,(PSEL && PENABLE && !PREADY) |=> $stable(PADDR) && ...,"Checks that all Master signals (PADDR, PWRITE, PWDATA, PSTRB, etc.) remain perfectly stable while waiting for PREADY.",,,,,,,
+AST_ERR_TIM,PSLVERR |-> (PSEL && PENABLE && PREADY),Checks that Slave Error (PSLVERR) is only asserted and valid when PREADY is high.,,,,,,,
+AST_NO_PIPE,(PSEL && PENABLE && PREADY) |=> (PENABLE == 1'b0),Checks the non-pipelined nature of APB: PENABLE must drop after a transaction completes.,,,,,,,
+AST_EXCL_01,$onehot0(PSEL_bus),Checks that no two slaves are selected simultaneously (Multi-slave decoder logic).,,,,,,,
+AST_WUP_01,$rose(PSEL) |-> $past(PWAKEUP),Checks APB5 Clock Gating feature: PWAKEUP must be asserted before PSEL.,,,,,,,
+AST_ALGN_01,PSEL |-> (PADDR[$clog2(DATA_WIDTH/8)-1:0] == '0),"Checks that the address is properly aligned to the data width boundary (e.g., 4-byte aligned)."
