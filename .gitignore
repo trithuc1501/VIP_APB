@@ -1,0 +1,25 @@
+# Simulation logs and outputs
+*.log
+*.out
+transcript
+*.wlf
+*.vcd
+*.ucdb
+*.vstf
+
+# Compiled libraries and work directories
+work/
+run/work/
+
+# Simulator settings
+modelsim.ini
+
+# Temporary/Backup files
+*~
+*.swp
+*.tmp
+.DS_Store
+
+# Regression script we made (optional, user can commit if they want, but output is ignored)
+
+.~lock.*#

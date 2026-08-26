@@ -1,7 +1,0 @@
-1 7 uvm_pkg 4 fast 53 /home/trithuc/altera_lite/25.1std/questa_fse/uvm-1.1d 0 0 26214400 0 136476 0
-1 14 questa_uvm_pkg 4 fast 53 /home/trithuc/altera_lite/25.1std/questa_fse/uvm-1.1d 0 0 1350656 26214400 7091 0
-1 11 APB_vip_pkg 4 fast 44 /home/trithuc/Documents/FPT/VIP_APB/run/work 0 0 6348800 26214400 13489 0
-1 14 tb_top_sv_unit 4 fast 44 /home/trithuc/Documents/FPT/VIP_APB/run/work 0 0 0 29097984 0 0
-1 6 APB_if 5 synth 44 /home/trithuc/Documents/FPT/VIP_APB/run/work 0 0 0 0 0 0
-1 6 APB_if 7 fast__2 44 /home/trithuc/Documents/FPT/VIP_APB/run/work 0 0 131072 0 815 0
-1 6 tb_top 4 fast 44 /home/trithuc/Documents/FPT/VIP_APB/run/work 0 0 131072 29097984 89 0

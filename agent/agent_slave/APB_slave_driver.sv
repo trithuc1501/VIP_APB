@@ -34,20 +34,22 @@ class APB_slave_driver extends uvm_driver #(APB_sequence_item);
                         
                         `uvm_info("DRV_SLAVE", $sformatf("Detected SETUP phase to addr 0x%0h", vif.drv_slave_cb.PADDR), UVM_NONE)
 
-                        if (req.wait_states > 0) begin
-                            repeat (req.wait_states) begin
-                                @(vif.drv_slave_cb);
-                                vif.drv_slave_cb.PREADY <= 1'b0;
-                                
-                                if (req.inject_pslverr_timing_err) begin
-                                    `uvm_info("DRV_SLAVE", "INJECTING ERROR: Asserting PSLVERR early during wait state!", UVM_LOW)
-                                    vif.drv_slave_cb.PSLVERR <= 1'b1;
+                        do begin
+                            @(vif.drv_slave_cb);
+                        end while (vif.drv_slave_cb.PENABLE === 1'b0 && vif.drv_slave_cb.PSEL === 1'b1);
+
+                        if (vif.drv_slave_cb.PENABLE === 1'b1) begin
+                            if (req.wait_states > 0) begin
+                                repeat (req.wait_states) begin
+                                    vif.drv_slave_cb.PREADY <= 1'b0;
+                                    
+                                    if (req.inject_pslverr_timing_err) begin
+                                        `uvm_info("DRV_SLAVE", "INJECTING ERROR: Asserting PSLVERR early during wait state!", UVM_LOW)
+                                        vif.drv_slave_cb.PSLVERR <= 1'b1;
+                                    end
+                                    @(vif.drv_slave_cb);
                                 end
                             end
-                        end
-
-                        @(vif.drv_slave_cb);
-                        if (vif.drv_slave_cb.PENABLE === 1'b1) begin
                             vif.drv_slave_cb.PREADY <= 1'b1;
 
                             if (req.pslverr) begin
@@ -98,14 +100,18 @@ class APB_slave_driver extends uvm_driver #(APB_sequence_item);
             
             disable fork;
             
-            vif.PREADY  <= 1'b0;
-            vif.PRDATA  <= 32'h0;
-            vif.PSLVERR <= 1'b0;
+            @(vif.drv_slave_cb);
+            vif.drv_slave_cb.PREADY  <= 1'b0;
+            vif.drv_slave_cb.PRDATA  <= 32'h0;
+            vif.drv_slave_cb.PSLVERR <= 1'b0;
             
             if (req != null) begin
                 seq_item_port.item_done();
                 req = null;
             end
+            
+            wait(vif.PRESETn === 1'b1);
+            @(vif.drv_slave_cb);
         end
     endtask
 endclass

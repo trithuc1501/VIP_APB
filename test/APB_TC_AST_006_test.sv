@@ -11,16 +11,16 @@ class APB_TC_AST_006_test extends APB_base_test;
     endfunction
 
     virtual task run_phase(uvm_phase phase);
-        APB_master_single_write_seq m_seq;
-        APB_slave_err_tim_seq       s_seq;
+        APB_master_err_pipe_seq   m_seq;
+        APB_slave_zero_wait_seq   s_seq; 
 
         phase.raise_objection(this);
 
-        s_seq = APB_slave_err_tim_seq::type_id::create("s_seq");
-        m_seq = APB_master_single_write_seq::type_id::create("m_seq");
+        s_seq = APB_slave_zero_wait_seq::type_id::create("s_seq");
+        m_seq = APB_master_err_pipe_seq::type_id::create("m_seq");
         
-        `uvm_info("TEST_AST_006", "STARTING NEGATIVE TEST: Slave asserts PSLVERR while PREADY=0", UVM_LOW)
-        `uvm_info("TEST_AST_006", "EXPECTING SVA AST_ERR_TIM to fire UVM_ERROR!", UVM_LOW)
+        `uvm_info("TEST_AST_006", "STARTING NEGATIVE TEST: Jumping directly to ACCESS (No Pipelining Check)", UVM_LOW)
+        `uvm_info("TEST_AST_006", "EXPECTING SVA AST_NO_PIPE to fire UVM_ERROR!", UVM_LOW)
         
         fork
             s_seq.start(env.slave_agent.sqr);

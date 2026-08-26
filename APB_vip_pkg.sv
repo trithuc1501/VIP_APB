@@ -50,12 +50,12 @@ package APB_vip_pkg;
     `include "test/APB_TC_FEAT_003_test.sv"
     `include "test/APB_TC_STR_001_test.sv"
     `include "test/APB_TC_STR_002_test.sv"
+
     `include "test/APB_TC_AST_001_test.sv"
     `include "test/APB_TC_AST_002_test.sv"
     `include "test/APB_TC_AST_003_test.sv"
+    `include "test/APB_TC_AST_004_test.sv"
     `include "test/APB_TC_AST_005_test.sv"
     `include "test/APB_TC_AST_006_test.sv"
     `include "test/APB_TC_AST_007_test.sv"
-    `include "test/APB_TC_AST_008_test.sv"
-
 endpackage

@@ -11,16 +11,16 @@ class APB_TC_AST_007_test extends APB_base_test;
     endfunction
 
     virtual task run_phase(uvm_phase phase);
-        APB_master_err_pipe_seq   m_seq;
-        APB_slave_zero_wait_seq   s_seq; 
+        APB_master_err_setup_seq   m_seq;
+        APB_slave_zero_wait_seq    s_seq; 
 
         phase.raise_objection(this);
 
         s_seq = APB_slave_zero_wait_seq::type_id::create("s_seq");
-        m_seq = APB_master_err_pipe_seq::type_id::create("m_seq");
+        m_seq = APB_master_err_setup_seq::type_id::create("m_seq");
         
-        `uvm_info("TEST_AST_007", "STARTING NEGATIVE TEST: Jumping directly to ACCESS (No Pipelining Check)", UVM_LOW)
-        `uvm_info("TEST_AST_007", "EXPECTING SVA AST_NO_PIPE to fire UVM_ERROR!", UVM_LOW)
+        `uvm_info("TEST_AST_007", "STARTING NEGATIVE TEST: Extending SETUP phase beyond 1 cycle", UVM_LOW)
+        `uvm_info("TEST_AST_007", "EXPECTING SVA AST_SETUP_01 to fire UVM_ERROR!", UVM_LOW)
         
         fork
             s_seq.start(env.slave_agent.sqr);

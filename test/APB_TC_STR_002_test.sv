@@ -38,7 +38,7 @@ class APB_TC_STR_002_test extends APB_base_test;
                     `uvm_warning("TEST_STR_002", "BOMB PLANTED! INJECTING ASYNC RESET MID-SIMULATION!!!")
                     vif.PRESETn = 1'b0;
                     
-                    #($urandom_range(2, 5) * 5ns);
+                    #($urandom_range(10, 20) * 5ns);
                     
                     vif.PRESETn = 1'b1;
                     `uvm_info("TEST_STR_002", "Reset Released. System should recover automatically.", UVM_LOW)

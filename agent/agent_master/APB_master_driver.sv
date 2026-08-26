@@ -44,11 +44,7 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
                             vif.drv_master_cb.PSTRB  <= 0;
                         end
 
-                        if (req.inject_pipeline_err) begin
-                            `uvm_info("DRV_MASTER", "INJECTING ERROR: Jumping directly to ACCESS phase from IDLE!", UVM_LOW)
-                            vif.drv_master_cb.PSEL    <= 1'b1;
-                            vif.drv_master_cb.PENABLE <= 1'b1;
-                        end else begin
+                        begin
                             vif.drv_master_cb.PSEL    <= 1'b1;
                             vif.drv_master_cb.PENABLE <= req.inject_penable_err ? 1'b1 : 1'b0;
 
@@ -75,7 +71,7 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
                                 end
 
                                 if (req.inject_stability_err) begin
-                                    vif.drv_master_cb.PADDR <= ~vif.drv_master_cb.PADDR;
+                                    vif.drv_master_cb.PADDR <= vif.drv_master_cb.PADDR ^ 32'h4;
                                     `uvm_info("DRV_MASTER", "INJECTING ERROR: Changing PADDR during wait states!", UVM_LOW)
                                 end
 
@@ -97,8 +93,14 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
                         req.pruser  = vif.drv_master_cb.PRUSER;
                         req.pbuser  = vif.drv_master_cb.PBUSER;
 
-                        vif.drv_master_cb.PSEL    <= 1'b0;
-                        vif.drv_master_cb.PENABLE <= 1'b0;
+                        if (req.inject_pipeline_err) begin
+                            `uvm_info("DRV_MASTER", "INJECTING ERROR: Holding PENABLE high after transfer (Pipelining violation)!", UVM_LOW)
+                            vif.drv_master_cb.PSEL    <= 1'b1;
+                            vif.drv_master_cb.PENABLE <= 1'b1;
+                        end else begin
+                            vif.drv_master_cb.PSEL    <= 1'b0;
+                            vif.drv_master_cb.PENABLE <= 1'b0;
+                        end
 
                         seq_item_port.item_done();
                         req = null;
@@ -112,13 +114,24 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
 
             disable fork;
             
-            vif.PSEL    <= 1'b0;
-            vif.PENABLE <= 1'b0;
+            @(vif.drv_master_cb);
+            vif.drv_master_cb.PSEL    <= 1'b0;
+            vif.drv_master_cb.PENABLE <= 1'b0;
+            vif.drv_master_cb.PADDR   <= '0;
+            vif.drv_master_cb.PWRITE  <= 1'b0;
+            vif.drv_master_cb.PPROT   <= '0;
+            vif.drv_master_cb.PNSE    <= 1'b0;
+            vif.drv_master_cb.PAUSER  <= '0;
+            vif.drv_master_cb.PWUSER  <= '0;
+            vif.drv_master_cb.PWAKEUP <= 1'b0;
             
             if (req != null) begin
                 seq_item_port.item_done();
                 req = null;
             end
+            
+            wait(vif.PRESETn === 1'b1);
+            @(vif.drv_master_cb);
         end
     endtask
 endclass
