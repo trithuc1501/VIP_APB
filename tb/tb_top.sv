@@ -24,7 +24,8 @@ module tb_top;
     APB_protocol_checker #(
         .ADDR_WIDTH(32),
         .DATA_WIDTH(32),
-        .REQUIRE_ALIGNED_ADDR(1)
+        .REQUIRE_ALIGNED_ADDR(1),
+        .ENABLE_LOWPOWER_CHECK(1)
     ) sva_checker (
         .PCLK(PCLK),
         .PRESETn(vif.PRESETn),

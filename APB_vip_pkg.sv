@@ -16,6 +16,8 @@ package APB_vip_pkg;
     `include "env/APB_env.sv"
 
     `include "seq/seq_master/APB_master_single_write_seq.sv"
+    `include "seq/seq_master/APB_master_user_seq.sv"
+    `include "seq/seq_master/APB_master_wakeup_err_seq.sv"
     `include "seq/seq_master/APB_master_single_read_seq.sv"
     `include "seq/seq_master/APB_master_b2b_wr_rd_seq.sv"
     `include "seq/seq_master/APB_master_random_delay_seq.sv"
@@ -28,6 +30,7 @@ package APB_vip_pkg;
     `include "seq/seq_master/APB_master_err_algn_seq.sv"
     
     `include "seq/seq_slave/APB_slave_zero_wait_seq.sv"
+    `include "seq/seq_slave/APB_slave_user_seq.sv"
     `include "seq/seq_slave/APB_slave_b2b_seq.sv"
     `include "seq/seq_slave/APB_slave_random_wait_seq.sv"
     `include "seq/seq_slave/APB_slave_error_seq.sv"
@@ -48,6 +51,8 @@ package APB_vip_pkg;
     `include "test/APB_TC_FEAT_001_test.sv"
     `include "test/APB_TC_FEAT_002_test.sv"
     `include "test/APB_TC_FEAT_003_test.sv"
+    `include "test/APB_TC_FEAT_004_test.sv"
+    `include "test/APB_TC_FEAT_005_test.sv"
     `include "test/APB_TC_STR_001_test.sv"
     `include "test/APB_TC_STR_002_test.sv"
 

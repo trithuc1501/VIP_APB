@@ -51,6 +51,8 @@ class APB_slave_driver extends uvm_driver #(APB_sequence_item);
                                 end
                             end
                             vif.drv_slave_cb.PREADY <= 1'b1;
+                            vif.drv_slave_cb.PRUSER <= req.pruser;
+                            vif.drv_slave_cb.PBUSER <= req.pbuser;
 
                             if (req.pslverr) begin
                                 vif.drv_slave_cb.PSLVERR <= 1'b1;
@@ -87,6 +89,8 @@ class APB_slave_driver extends uvm_driver #(APB_sequence_item);
                         vif.drv_slave_cb.PREADY  <= 1'b0;
                         vif.drv_slave_cb.PSLVERR <= 1'b0;
                         vif.drv_slave_cb.PRDATA  <= 0;
+                        vif.drv_slave_cb.PRUSER  <= 0;
+                        vif.drv_slave_cb.PBUSER  <= 0;
 
                         seq_item_port.item_done();
                         req = null;

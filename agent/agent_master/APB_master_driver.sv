@@ -14,6 +14,7 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
     task run_phase(uvm_phase phase);
         vif.drv_master_cb.PSEL    <= 1'b0;
         vif.drv_master_cb.PENABLE <= 1'b0;
+        vif.drv_master_cb.PWAKEUP <= 1'b0;
 
         forever begin
             wait(vif.PRESETn === 1'b1);
@@ -32,9 +33,19 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
                         vif.drv_master_cb.PWRITE  <= req.pwrite;
                         vif.drv_master_cb.PPROT   <= req.pprot;
                         vif.drv_master_cb.PNSE    <= req.pnse;
+                        if (req.pwakeup == 1'b1 && vif.drv_master_cb.PWAKEUP !== 1'b1) begin
+                            vif.drv_master_cb.PWAKEUP <= 1'b1;
+                            if (req.inject_pwakeup_err) begin
+                                `uvm_info("DRV_MASTER", "INJECTING ERROR: Asserting PSEL in the same cycle as PWAKEUP!", UVM_LOW)
+                            end else begin
+                                @(vif.drv_master_cb);
+                            end
+                        end else if (req.pwakeup == 1'b0) begin
+                            vif.drv_master_cb.PWAKEUP <= 1'b0;
+                        end
+
                         vif.drv_master_cb.PAUSER  <= req.pauser;
                         vif.drv_master_cb.PWUSER  <= req.pwuser;
-                        vif.drv_master_cb.PWAKEUP <= req.pwakeup;
                         
                         if (req.pwrite == APB_WRITE) begin
                             vif.drv_master_cb.PWDATA <= req.pwdata;

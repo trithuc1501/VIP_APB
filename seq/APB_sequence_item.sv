@@ -14,7 +14,8 @@ class APB_sequence_item extends uvm_sequence_item;
     rand bit [(DATA_WIDTH/8) - 1:0]  pstrb;
     rand bit [2:0]                   pprot;
     rand bit                         pnse;
-    rand bit                         pwakeup;
+    rand bit pwakeup = 1;
+    rand bit inject_pwakeup_err;
     rand bit [USER_REQ_WIDTH - 1:0]  pauser;
     rand bit [USER_DATA_WIDTH - 1:0] pwuser;
     
@@ -42,6 +43,7 @@ class APB_sequence_item extends uvm_sequence_item;
         `uvm_field_int (pprot,       UVM_ALL_ON | UVM_BIN)
         `uvm_field_int (pnse,        UVM_ALL_ON | UVM_BIN)
         `uvm_field_int (pwakeup,     UVM_ALL_ON | UVM_BIN)
+        `uvm_field_int (inject_pwakeup_err,        UVM_ALL_ON | UVM_BIN)
         `uvm_field_int (pauser,      UVM_ALL_ON | UVM_HEX)
         `uvm_field_int (pwuser,      UVM_ALL_ON | UVM_HEX)
         `uvm_field_int (prdata,      UVM_ALL_ON | UVM_HEX)

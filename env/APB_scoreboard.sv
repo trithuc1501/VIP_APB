@@ -44,7 +44,11 @@ class APB_scoreboard extends uvm_scoreboard;
             ref_mem[item.paddr] = current_data;
             `uvm_info("SCB_WRITE", $sformatf("Stored data 0x%0h to address 0x%0h with PSTRB=0b%0b, PPROT=0b%0b", current_data, item.paddr, item.pstrb, item.pprot), UVM_LOW)
         end
-        else if (item.pwrite == APB_READ) begin
+        if (item.pauser != 0 || item.pwuser != 0 || item.pruser != 0 || item.pbuser != 0) begin
+            `uvm_info("SCB_USER", $sformatf("Observed User Signals -> PAUSER: 0x%0h, PWUSER: 0x%0h, PRUSER: 0x%0h, PBUSER: 0x%0h", item.pauser, item.pwuser, item.pruser, item.pbuser), UVM_LOW)
+        end
+
+        if (item.pwrite == APB_READ) begin
             if (ref_mem.exists(item.paddr)) begin
                 if (ref_mem[item.paddr] == item.prdata) begin
                     `uvm_info("SCB_PASS", $sformatf("[PASSED] Address 0x%0h | Expected: 0x%0h == Actual: 0x%0h", 
