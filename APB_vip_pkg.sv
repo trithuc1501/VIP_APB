@@ -1,42 +1,37 @@
 package APB_vip_pkg;
     import uvm_pkg::*;
     `include "uvm_macros.svh"
-
     `include "seq/APB_sequence_item.sv"
-
     `include "env/APB_agent_config.sv"
     `include "agent/APB_monitor.sv"
     `include "agent/agent_master/APB_master_driver.sv"
+    `include "agent/agent_master/APB_master_parity_err_driver.sv"
+    `include "agent/agent_master/APB_master_penable_err_driver.sv"
+    `include "agent/agent_master/APB_master_psel_drop_err_driver.sv"
+    `include "agent/agent_master/APB_master_stability_err_driver.sv"
+    `include "agent/agent_master/APB_master_pipeline_err_driver.sv"
+    `include "agent/agent_master/APB_master_setup_ext_err_driver.sv"
+    `include "agent/agent_master/APB_master_wakeup_err_driver.sv"
     `include "agent/agent_slave/APB_slave_driver.sv"
-
+    `include "agent/agent_slave/APB_slave_pslverr_early_driver.sv"
     `include "agent/agent_master/APB_master_agent.sv"
     `include "agent/agent_slave/APB_slave_agent.sv"
-
     `include "env/APB_scoreboard.sv"
+    `include "env/APB_env_config.sv"
     `include "env/APB_env.sv"
-
     `include "seq/seq_master/APB_master_single_write_seq.sv"
     `include "seq/seq_master/APB_master_user_seq.sv"
-    `include "seq/seq_master/APB_master_wakeup_err_seq.sv"
     `include "seq/seq_master/APB_master_single_read_seq.sv"
     `include "seq/seq_master/APB_master_b2b_wr_rd_seq.sv"
     `include "seq/seq_master/APB_master_random_delay_seq.sv"
     `include "seq/seq_master/APB_master_stress_seq.sv"
-    `include "seq/seq_master/APB_master_err_inj_seq.sv"
-    `include "seq/seq_master/APB_master_err_psel_seq.sv"
-    `include "seq/seq_master/APB_master_err_stab_seq.sv"
-    `include "seq/seq_master/APB_master_err_setup_seq.sv"
-    `include "seq/seq_master/APB_master_err_pipe_seq.sv"
     `include "seq/seq_master/APB_master_err_algn_seq.sv"
-    
     `include "seq/seq_slave/APB_slave_zero_wait_seq.sv"
     `include "seq/seq_slave/APB_slave_user_seq.sv"
     `include "seq/seq_slave/APB_slave_b2b_seq.sv"
     `include "seq/seq_slave/APB_slave_random_wait_seq.sv"
     `include "seq/seq_slave/APB_slave_error_seq.sv"
     `include "seq/seq_slave/APB_slave_timeout_seq.sv"
-    `include "seq/seq_slave/APB_slave_err_tim_seq.sv"
-
     `include "test/APB_base_test.sv"
     `include "test/APB_TC_BSC_001_test.sv"
     `include "test/APB_TC_BSC_002_test.sv"
@@ -53,9 +48,9 @@ package APB_vip_pkg;
     `include "test/APB_TC_FEAT_003_test.sv"
     `include "test/APB_TC_FEAT_004_test.sv"
     `include "test/APB_TC_FEAT_005_test.sv"
+    `include "test/APB_TC_FEAT_006_test.sv"
     `include "test/APB_TC_STR_001_test.sv"
     `include "test/APB_TC_STR_002_test.sv"
-
     `include "test/APB_TC_AST_001_test.sv"
     `include "test/APB_TC_AST_002_test.sv"
     `include "test/APB_TC_AST_003_test.sv"

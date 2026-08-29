@@ -11,7 +11,7 @@ tests=$(ls ../test/APB_TC_*.sv | xargs -n 1 basename | sed 's/\.sv//')
 for test in $tests; do
     make all TEST=$test > ${test}_run.out 2>&1
     
-    if grep -q "Error loading design\|Error:\|Fatal:" ${test}_run.out; then
+    if grep -qF -e "** Error:" -e "** Fatal:" -e "Error loading design" ${test}_run.out; then
         printf "%-30s | %-10s\n" "$test" "COMPILE ERR"
         continue
     fi
@@ -23,7 +23,7 @@ for test in $tests; do
     else
         # AST_002, AST_003, AST_005, AST_006, AST_007, AST_008 inject errors and expect SVA to fire
         # TIM_002 injects a timeout and expects APB Bus Hung
-        if [[ "$test" =~ APB_TC_AST_00[1-7]_test ]] || [[ "$test" == "APB_TC_TIM_002_test" ]] || [[ "$test" == "APB_TC_FEAT_005_test" ]]; then
+        if [[ "$test" =~ APB_TC_AST_00[1-7]_test ]] || [[ "$test" == "APB_TC_TIM_002_test" ]] || [[ "$test" == "APB_TC_FEAT_005_test" ]] || [[ "$test" == "APB_TC_FEAT_006_test" ]]; then
             if [ "$err_count" -gt 0 ]; then
                 printf "%-30s | %-10s (Expected %s errors)\n" "$test" "PASS" "$err_count"
             else
