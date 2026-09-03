@@ -1,12 +1,15 @@
 class APB_TC_FEAT_006_test extends APB_base_test;
     `uvm_component_utils(APB_TC_FEAT_006_test)
+
     function new(string name = "APB_TC_FEAT_006_test", uvm_component parent = null);
         super.new(name, parent);
     endfunction
+
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         APB_master_driver::type_id::set_type_override(APB_master_parity_err_driver::get_type());
     endfunction
+
     virtual task run_phase(uvm_phase phase);
         APB_master_single_write_seq m_seq;
         APB_slave_zero_wait_seq     s_seq;
@@ -26,4 +29,5 @@ class APB_TC_FEAT_006_test extends APB_base_test;
         #50ns;
         phase.drop_objection(this);
     endtask
+
 endclass

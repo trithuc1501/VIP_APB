@@ -1,4 +1,5 @@
 typedef enum bit { APB_READ = 0, APB_WRITE = 1 } apb_direction_e;
+
 class APB_sequence_item #(
     int ADDR_WIDTH = 32,
     int DATA_WIDTH = 32,
@@ -38,9 +39,11 @@ class APB_sequence_item #(
         `uvm_field_int (delay,       UVM_ALL_ON | UVM_DEC | UVM_NOCOMPARE)
         `uvm_field_int (wait_states, UVM_ALL_ON | UVM_DEC | UVM_NOCOMPARE)
     `uvm_object_utils_end
+
     function new(string name = "APB_sequence_item");
         super.new(name);
     endfunction
+
     constraint c_align {
         paddr % (DATA_WIDTH/8) == 0;
     }

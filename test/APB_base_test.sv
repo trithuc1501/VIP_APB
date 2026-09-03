@@ -3,9 +3,11 @@ class APB_base_test extends uvm_test;
     APB_env env;
     APB_agent_config m_master_cfg;
     APB_agent_config m_slave_cfg;
+
     function new(string name, uvm_component parent = null);
         super.new(name, parent);
     endfunction
+
     virtual function void build_phase(uvm_phase phase);
         int master_active = 1;
         int slave_active  = 1;
@@ -48,13 +50,15 @@ class APB_base_test extends uvm_test;
                   (slave_active ? "ACTIVE" : "PASSIVE")), UVM_LOW)
         begin
             APB_env_config env_cfg = APB_env_config::type_id::create("env_cfg");
-            int en_slave = 0, en_scb = 0, no_master = 0;
+            int en_slave = 0, en_scb = 0, no_master = 0, no_slave = 0;
             void'(uvm_config_db#(int)::get(this, "", "UVM_ENABLE_SLAVE", en_slave));
             void'(uvm_config_db#(int)::get(this, "", "UVM_ENABLE_SCOREBOARD", en_scb));
             void'(uvm_config_db#(int)::get(this, "", "UVM_NO_MASTER", no_master));
+            void'(uvm_config_db#(int)::get(this, "", "UVM_NO_SLAVE", no_slave));
             if ($test$plusargs("UVM_ENABLE_SLAVE") || en_slave)  env_cfg.has_slave = 1;
             if ($test$plusargs("UVM_ENABLE_SCOREBOARD") || en_scb) env_cfg.has_scoreboard = 1;
             if ($test$plusargs("UVM_NO_MASTER") || no_master) env_cfg.has_master = 0;
+            if ($test$plusargs("UVM_NO_SLAVE") || no_slave) env_cfg.has_slave = 0;
             uvm_config_db#(APB_env_config)::set(this, "env", "env_cfg", env_cfg);
             if (env_cfg.has_master && env_cfg.has_slave) begin
                 m_slave_cfg.has_monitor = 0;
@@ -64,6 +68,7 @@ class APB_base_test extends uvm_test;
         uvm_config_db#(APB_agent_config)::set(this, "env.slave_agent*", "agent_cfg", m_slave_cfg);
         env = APB_env::type_id::create("env", this);
     endfunction
+
     virtual function void end_of_elaboration_phase(uvm_phase phase);
         super.end_of_elaboration_phase(phase);
         this.set_report_id_action_hier("SEQREQZMB", UVM_NO_ACTION);
@@ -71,4 +76,5 @@ class APB_base_test extends uvm_test;
             uvm_top.print_topology();
         end
     endfunction
+
 endclass

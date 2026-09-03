@@ -1,9 +1,11 @@
 class APB_master_stress_seq extends uvm_sequence #(APB_sequence_item);
     `uvm_object_utils(APB_master_stress_seq)
     int num_trans = 1000;
+
     function new(string name = "APB_master_stress_seq");
         super.new(name);
     endfunction
+
     virtual task body();
         APB_sequence_item req;
         bit is_write;
@@ -32,4 +34,5 @@ class APB_master_stress_seq extends uvm_sequence #(APB_sequence_item);
         end
         `uvm_info("SEQ_STRESS", "STRESS Sequence DONE!", UVM_LOW)
     endtask
+
 endclass

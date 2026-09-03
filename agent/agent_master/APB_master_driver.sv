@@ -1,15 +1,18 @@
 class APB_master_driver extends uvm_driver #(APB_sequence_item);
     `uvm_component_utils(APB_master_driver)
     virtual APB_if vif;
+
     function new(string name = "APB_master_driver", uvm_component parent = null);
         super.new(name, parent);
     endfunction
+
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         if (!uvm_config_db#(virtual APB_if)::get(this, "", "vif", vif)) begin
             `uvm_fatal("DRV_MASTER", "Could not get virtual interface")
         end
     endfunction
+
     virtual task run_phase(uvm_phase phase);
         reset_signals();
         forever begin
@@ -34,6 +37,7 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
             end
         end
     endtask
+
     virtual task reset_signals();
         vif.drv_master_cb.PSEL    <= 1'b0;
         vif.drv_master_cb.PENABLE <= 1'b0;
@@ -50,6 +54,7 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
         vif.drv_master_cb.PAUSER <= 0;
         vif.drv_master_cb.PWUSER <= 0;
     endtask
+
     virtual task drive_transaction(APB_sequence_item req);
         repeat (req.delay) @(vif.drv_master_cb);
         if (vif.PWAKEUP !== 1'b1) begin
@@ -61,6 +66,7 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
         drive_access_phase(req);
         wait_for_pready_and_finish(req);
     endtask
+
     virtual task drive_setup_phase(APB_sequence_item req);
         vif.drv_master_cb.PSEL    <= 1'b1;
         vif.drv_master_cb.PENABLE <= 1'b0;
@@ -83,10 +89,12 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
         vif.drv_master_cb.PCTRLCHK  <= ^{1'b1, 1'b0, req.pwrite};
         @(vif.drv_master_cb);
     endtask
+
     virtual task drive_access_phase(APB_sequence_item req);
         vif.drv_master_cb.PENABLE <= 1'b1;
         vif.drv_master_cb.PCTRLCHK <= ^{1'b1, 1'b1, req.pwrite};
     endtask
+
     virtual task wait_for_pready_and_finish(APB_sequence_item req);
         int timeout_cnt = 0;
         do begin
@@ -106,4 +114,5 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
         vif.drv_master_cb.PENABLE <= 1'b0;
         vif.drv_master_cb.PCTRLCHK <= 1'b0;
     endtask
+
 endclass

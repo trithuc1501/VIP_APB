@@ -9,9 +9,6 @@ TC_TIM_002,REQ_TIM_02,Corner Case Timing,Timeout Watchdog Trigger,Verify watchdo
 TC_TIM_003,REQ_TIM_03,Corner Case Timing,Master Idle & Slave Wait Stress,Verify bus stability when Master delays SETUP and Slave delays PREADY.,Drive random idle cycles before SETUP.,Delay PREADY with random wait states.,"Data integrity maintained, SVA assertions pass.",COV_TIM_STRESS,High
 TC_ERR_001,REQ_ERR_01,Error Handling,Single PSLVERR,Verify slave error reporting.,Drive R/W.,"PREADY=1, PSLVERR=1.","Monitor captures error, Scoreboard flags it.",COV_ERR_01,High
 TC_ERR_002,REQ_ERR_02,Error Handling,Consecutive PSLVERR,Verify behavior on continuous errors.,Drive B2B R/W.,Consecutive PSLVERR=1.,"System remains stable, logs multiple errors.",COV_ERR_02,Medium
-TC_ERR_003,REQ_ERR_03,Multi-Slave,Unmapped Address Region,Verify access to unmapped address space.,Drive to undefined PADDR.,Default slave asserts PSLVERR/DECERR.,Proper error routing for unmapped access.,COV_ERR_UNMAP,High
-TC_MSL_001,REQ_MSL_01,Multi-Slave,Address Decoding,Verify transactions route to correct slave based on PADDR.,Drive diverse PADDRs.,Matching Slave responds.,Decoder asserts correct PSELx.,COV_DEC_01,High
-TC_MSL_002,REQ_MSL_02,Multi-Slave,Slave Switching,Verify B2B transactions switching between slaves.,Drive Slave 1 then Slave 2 continuously.,Slaves respond properly.,"PSEL1 deasserts, PSEL2 asserts correctly.",COV_DEC_SW,High
 TC_FEAT_001,REQ_AP4_01,APB4/5,Partial PSTRB Coverage,Verify partial byte lane masking.,Drive write with partial PSTRB.,Update only selected bytes.,Memory correctly masked. Scoreboard aligns bytes.,COV_STRB_PRT,Medium
 TC_FEAT_002,REQ_AP4_02,APB4/5,Zero PSTRB Coverage,Verify write with all PSTRB bits low (Zero Strobe).,Drive write with PSTRB=0.,"Respond normally, do not alter memory.",Memory remains unchanged. Scoreboard verifies NO write occurred.,COV_STRB_ZR,High
 TC_FEAT_003,REQ_AP4_03,APB4/5,PPROT Combinations,"Verify privileged, secure, and data/instruction accesses.",Drive all combinations of PPROT[2:0].,Respond normally.,Protocol attributes routed correctly and captured.,COV_PROT_ALL,Medium
@@ -37,6 +34,5 @@ AST_PSEL_01,(PSEL && PENABLE && !PREADY) |=> PSEL,Checks that PSEL is held high 
 AST_STAB_01,(PSEL && PENABLE && !PREADY) |=> $stable(PADDR) && ...,"Checks that all Master signals (PADDR, PWRITE, PWDATA, PSTRB, etc.) remain perfectly stable while waiting for PREADY.",,,,,,,
 AST_ERR_TIM,PSLVERR |-> (PSEL && PENABLE && PREADY),Checks that Slave Error (PSLVERR) is only asserted and valid when PREADY is high.,,,,,,,
 AST_NO_PIPE,(PSEL && PENABLE && PREADY) |=> (PENABLE == 1'b0),Checks the non-pipelined nature of APB: PENABLE must drop after a transaction completes.,,,,,,,
-AST_EXCL_01,$onehot0(PSEL_bus),Checks that no two slaves are selected simultaneously (Multi-slave decoder logic).,,,,,,,
 AST_WUP_01,$rose(PSEL) |-> $past(PWAKEUP),Checks APB5 Clock Gating feature: PWAKEUP must be asserted before PSEL.,,,,,,,
 AST_ALGN_01,PSEL |-> (PADDR[$clog2(DATA_WIDTH/8)-1:0] == '0),"Checks that the address is properly aligned to the data width boundary (e.g., 4-byte aligned)."

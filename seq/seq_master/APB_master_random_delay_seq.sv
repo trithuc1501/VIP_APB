@@ -1,8 +1,10 @@
 class APB_master_random_delay_seq extends uvm_sequence #(APB_sequence_item);
     `uvm_object_utils(APB_master_random_delay_seq)
+
     function new(string name = "APB_master_random_delay_seq");
         super.new(name);
     endfunction
+
     virtual task body();
         APB_master_single_write_seq wr_seq;
         APB_master_single_read_seq  rd_seq;
@@ -23,4 +25,5 @@ class APB_master_random_delay_seq extends uvm_sequence #(APB_sequence_item);
         end
         `uvm_info("SEQ_MASTER", "Finished Random Delay Sequence", UVM_LOW)
     endtask
+
 endclass

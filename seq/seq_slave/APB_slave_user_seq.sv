@@ -1,8 +1,10 @@
 class APB_slave_user_seq extends uvm_sequence #(APB_sequence_item);
     `uvm_object_utils(APB_slave_user_seq)
+
     function new(string name = "APB_slave_user_seq");
         super.new(name);
     endfunction
+
     virtual task body();
         APB_sequence_item req;
         `uvm_info("SEQ_SLAVE", "Slave is ready with User Signals (PRUSER=0xCC, PBUSER=0xDD)", UVM_LOW)
@@ -16,4 +18,5 @@ class APB_slave_user_seq extends uvm_sequence #(APB_sequence_item);
             finish_item(req);
         end
     endtask
+
 endclass

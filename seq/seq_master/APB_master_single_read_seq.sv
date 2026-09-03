@@ -3,11 +3,13 @@ class APB_master_single_read_seq extends uvm_sequence #(APB_sequence_item);
     bit [31:0] cfg_addr;
     int        cfg_delay;
     bit [31:0] read_data;
+
     function new(string name = "APB_master_single_read_seq");
         super.new(name);
         cfg_addr  = $urandom() & 32'hFFFF_FFFC;
         cfg_delay = 0;
     endfunction
+
     virtual task body();
         APB_sequence_item req;
         `uvm_info("SEQ_MASTER", $sformatf("Start Read: Addr=0x%0h", cfg_addr), UVM_LOW)
@@ -22,4 +24,5 @@ class APB_master_single_read_seq extends uvm_sequence #(APB_sequence_item);
         read_data = req.prdata;
         `uvm_info("SEQ_MASTER", $sformatf("Done Read Sequence. Received PRDATA = 0x%0h", read_data), UVM_LOW)
     endtask
+
 endclass

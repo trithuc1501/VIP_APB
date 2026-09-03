@@ -1,8 +1,10 @@
 class APB_slave_pslverr_early_driver extends APB_slave_driver;
     `uvm_component_utils(APB_slave_pslverr_early_driver)
+
     function new(string name = "APB_slave_pslverr_early_driver", uvm_component parent = null);
         super.new(name, parent);
     endfunction
+
     virtual task drive_response(APB_sequence_item req);
         if (vif.drv_slave_cb.PENABLE === 1'b1) begin
             if (req.wait_states > 0) begin
@@ -47,4 +49,5 @@ class APB_slave_pslverr_early_driver extends APB_slave_driver;
             end
         end
     endtask
+
 endclass

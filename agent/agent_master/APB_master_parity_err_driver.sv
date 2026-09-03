@@ -1,8 +1,10 @@
 class APB_master_parity_err_driver extends APB_master_driver;
     `uvm_component_utils(APB_master_parity_err_driver)
+
     function new(string name = "APB_master_parity_err_driver", uvm_component parent = null);
         super.new(name, parent);
     endfunction
+
     virtual task drive_setup_phase(APB_sequence_item req);
         vif.drv_master_cb.PSEL    <= 1'b1;
         vif.drv_master_cb.PENABLE <= 1'b0;
@@ -26,4 +28,5 @@ class APB_master_parity_err_driver extends APB_master_driver;
         vif.drv_master_cb.PADDRCHK <= ~(^req.paddr); 
         @(vif.drv_master_cb);
     endtask
+
 endclass

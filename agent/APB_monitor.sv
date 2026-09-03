@@ -2,13 +2,16 @@ class APB_monitor extends uvm_monitor;
     `uvm_component_utils(APB_monitor)
     virtual APB_if vif;
     uvm_analysis_port #(APB_sequence_item) ap;
+
     function new(string name = "APB_monitor", uvm_component parent);
         super.new(name, parent);
     endfunction
+
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         ap = new("ap", this);
     endfunction
+
     virtual task run_phase(uvm_phase phase);
         APB_sequence_item item;
         forever begin
@@ -38,4 +41,5 @@ class APB_monitor extends uvm_monitor;
             end
         end
     endtask
+
 endclass

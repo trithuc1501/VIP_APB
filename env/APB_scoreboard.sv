@@ -2,17 +2,21 @@ class APB_scoreboard extends uvm_scoreboard;
     `uvm_component_utils(APB_scoreboard)
     uvm_analysis_imp #(APB_sequence_item, APB_scoreboard) item_export;
     bit [31:0] ref_mem [int];
+
     function new(string name = "APB_scoreboard", uvm_component parent);
         super.new(name, parent);
     endfunction
+
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         item_export = new("item_export", this);
     endfunction
+
     virtual task reset_phase(uvm_phase phase);
         super.reset_phase(phase);
         `uvm_info("SCB_RST", "System Reset detected! Interface FSM resets.", UVM_LOW)
     endtask
+
     virtual function void write(APB_sequence_item item);
         `uvm_info("SCB", $sformatf("Scoreboard received transaction at address: 0x%0h", item.paddr), UVM_HIGH)
         if (item.pslverr == 1'b1) begin
@@ -51,4 +55,5 @@ class APB_scoreboard extends uvm_scoreboard;
             end
         end
     endfunction
+
 endclass

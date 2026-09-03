@@ -6,9 +6,11 @@ class APB_master_agent extends uvm_agent;
     APB_monitor                        mon;
     uvm_analysis_port #(APB_sequence_item) ap;
     APB_agent_config m_cfg;
+
     function new(string name, uvm_component parent);
         super.new(name, parent);
     endfunction
+
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         if (!uvm_config_db#(APB_agent_config)::get(this, "", "agent_cfg", m_cfg)) begin
@@ -26,6 +28,7 @@ class APB_master_agent extends uvm_agent;
             sqr = uvm_sequencer#(APB_sequence_item)::type_id::create("sqr", this);
         end
     endfunction
+
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
         if (m_cfg.has_monitor && mon != null) begin
@@ -35,4 +38,5 @@ class APB_master_agent extends uvm_agent;
             drv.seq_item_port.connect(sqr.seq_item_export);
         end
     endfunction
+
 endclass

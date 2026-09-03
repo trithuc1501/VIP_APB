@@ -14,6 +14,7 @@ class APB_master_single_write_seq extends uvm_sequence #(APB_sequence_item);
     constraint c_pprot {
         cfg_pprot == 3'b000;
     }
+
     function new(string name = "APB_master_single_write_seq");
         super.new(name);
         cfg_addr  = $urandom() & 32'hFFFF_FFFC;
@@ -21,6 +22,7 @@ class APB_master_single_write_seq extends uvm_sequence #(APB_sequence_item);
         cfg_delay = 0;
         cfg_pstrb = 4'b1111;
     endfunction
+
     virtual task body();
         APB_sequence_item req;
         `uvm_info("SEQ_MASTER", $sformatf("Start Write: Addr=0x%0h, Data=0x%0h", cfg_addr, cfg_data), UVM_LOW)
@@ -36,4 +38,5 @@ class APB_master_single_write_seq extends uvm_sequence #(APB_sequence_item);
         finish_item(req);
         `uvm_info("SEQ_MASTER", "Done Write Sequence", UVM_HIGH)
     endtask
+
 endclass

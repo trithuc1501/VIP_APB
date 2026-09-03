@@ -1,11 +1,14 @@
 class APB_TC_FEAT_003_test extends APB_base_test;
     `uvm_component_utils(APB_TC_FEAT_003_test)
+
     function new(string name = "APB_TC_FEAT_003_test", uvm_component parent = null);
         super.new(name, parent);
     endfunction
+
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
     endfunction
+
     virtual task run_phase(uvm_phase phase);
         APB_master_single_write_seq wr_seq;
         APB_slave_b2b_seq           s_seq;
@@ -27,4 +30,5 @@ class APB_TC_FEAT_003_test extends APB_base_test;
         disable fork;
         phase.drop_objection(this);
     endtask
+
 endclass

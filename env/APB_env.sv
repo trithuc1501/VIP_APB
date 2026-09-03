@@ -3,10 +3,13 @@ class APB_env extends uvm_env;
     APB_master_agent master_agent;
     APB_slave_agent  slave_agent;
     APB_scoreboard   scoreboard;
+
     function new(string name, uvm_component parent);
         super.new(name, parent);
     endfunction
+
     APB_env_config m_cfg;
+
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         if (!uvm_config_db#(APB_env_config)::get(this, "", "env_cfg", m_cfg)) begin
@@ -23,6 +26,7 @@ class APB_env extends uvm_env;
             scoreboard = APB_scoreboard::type_id::create("scoreboard", this);
         end
     endfunction
+
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
         if (m_cfg.has_scoreboard) begin
@@ -40,4 +44,5 @@ class APB_env extends uvm_env;
             end
         end
     endfunction
+
 endclass

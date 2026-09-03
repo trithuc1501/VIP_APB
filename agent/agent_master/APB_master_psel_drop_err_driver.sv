@@ -1,8 +1,10 @@
 class APB_master_psel_drop_err_driver extends APB_master_driver;
     `uvm_component_utils(APB_master_psel_drop_err_driver)
+
     function new(string name = "APB_master_psel_drop_err_driver", uvm_component parent = null);
         super.new(name, parent);
     endfunction
+
     virtual task wait_for_pready_and_finish(APB_sequence_item req);
         int timeout_cnt = 0;
         do begin
@@ -21,4 +23,5 @@ class APB_master_psel_drop_err_driver extends APB_master_driver;
         vif.drv_master_cb.PENABLE <= 1'b0;
         vif.drv_master_cb.PCTRLCHK <= 1'b0;
     endtask
+
 endclass

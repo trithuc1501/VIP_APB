@@ -12,16 +12,17 @@ This repository contains a Universal Verification Methodology (UVM) Verification
   - Interface Protection (Hardware parity for `PADDRCHK`, `PCTRLCHK`, `PWDATACHK`, `PRDATACHK`, `PREADYCHK`).
 
 - **Embedded SVAs (SystemVerilog Assertions):** 
-  Protocol checkers are embedded directly inside `interface APB_if`. Checks for Parity and Low-Power can be dynamically enabled/disabled at runtime via interface variables.
+  Protocol checkers are embedded directly inside `interface APB_if`. Advanced checks (Parity, Unaligned Address, Low-Power) are configurable at compile-time per instance via interface parameters.
 
-- **Topology Configuration:**
-  The environment (`APB_env`) uses `APB_env_config` to support configurable topologies. It can operate in loopback mode (Master and Slave active) or be integrated with a DUT by toggling `has_master` or `has_slave` flags.
+- **Topology Configuration (N-Endpoint Scalability):**
+  The environment (`APB_env`) uses `APB_env_config` to support configurable topologies. It defaults to a Master-only configuration for immediate Slave DUT integration. The VIP Slave Agent and internal Scoreboard can be explicitly enabled for loopback self-testing via `+UVM_ENABLE_SLAVE` and `+UVM_ENABLE_SCOREBOARD`. Kill switches (`+UVM_NO_MASTER`, `+UVM_NO_SLAVE`) are provided for hierarchical overrides. 
+  Furthermore, the VIP is designed as a true **Protocol Endpoint**. To verify complex SoC Interconnects, system integrators can instantiate *N* independent pairs of `APB_if` and `APB_env` without altering a single line of VIP code.
 
 - **Factory-Based Error Injection:**
   Protocol violations are injected by overriding the standard drivers with derived error-injecting drivers (e.g., `APB_master_parity_err_driver`) via the UVM Factory, rather than sequence-level flags or callbacks.
 
 - **Scoreboard:** 
-  Utilizes an associative array for SRAM emulation, checking data integrity with `PSTRB` support.
+  Utilizes an associative array for SRAM emulation, checking data integrity with `PSTRB` support. Disabled by default, intended as a reference model for VIP loopback verification.
 
 ## Directory Structure
 ```text
@@ -29,10 +30,13 @@ VIP_APB/
 ├── agent/                 # Master and Slave UVM Agents
 ├── env/                   # APB Environment, Configuration, and Scoreboard
 ├── seq/                   # Parameterized Sequence Items and Sequences
-├── tb/                    # Top Testbench and APB Interface (SVAs)
+├── tb/                    # APB Interface (SVAs) and Integration Templates
+│   ├── APB_if.sv
+│   ├── tb_top_loopback.sv
+│   ├── tb_top_dut_slave.sv
+│   └── tb_top_dut_master.sv
 ├── test/                  # UVM Testcases
-├── run/
-│   └── Makefile           # Compilation and Simulation scripts
+├── run/                   # Compilation and Simulation scripts
 ├── APB_VIP_Testplan.csv   # Verification Plan
 └── run_regression.sh      # Regression Script
 ```
@@ -61,5 +65,4 @@ make run TEST=APB_TC_BSC_001_test
 ```
 
 ## Future Scope
-- **Multi-Slave Routing:** Introduce an `APB_Decoder` to map transactions to multiple slaves based on `PADDR`.
-- **UVM RAL:** Implement a UVM Register Abstraction Layer model.
+- **Functional Coverage:** Implement a `uvm_subscriber` containing covergroups for protocol coverage measurement.
