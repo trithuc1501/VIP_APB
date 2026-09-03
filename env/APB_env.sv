@@ -19,15 +19,25 @@ class APB_env extends uvm_env;
         if (m_cfg.has_slave) begin
             slave_agent = APB_slave_agent::type_id::create("slave_agent", this);
         end
-        scoreboard = APB_scoreboard::type_id::create("scoreboard", this);
+        if (m_cfg.has_scoreboard) begin
+            scoreboard = APB_scoreboard::type_id::create("scoreboard", this);
+        end
     endfunction
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
-        if (m_cfg.has_master && master_agent.m_cfg.has_monitor) begin
-            master_agent.ap.connect(scoreboard.item_export);
-        end 
-        else if (m_cfg.has_slave && slave_agent.m_cfg.has_monitor) begin
-            slave_agent.ap.connect(scoreboard.item_export);
+        if (m_cfg.has_scoreboard) begin
+            bit connected = 0;
+            if (m_cfg.has_master && master_agent.m_cfg.has_monitor) begin
+                master_agent.ap.connect(scoreboard.item_export);
+                connected = 1;
+            end 
+            else if (m_cfg.has_slave && slave_agent.m_cfg.has_monitor) begin
+                slave_agent.ap.connect(scoreboard.item_export);
+                connected = 1;
+            end
+            if (!connected) begin
+                `uvm_fatal("ENV_CFG", "No monitor connected to scoreboard - check has_master/has_slave/has_monitor combination!")
+            end
         end
     endfunction
 endclass

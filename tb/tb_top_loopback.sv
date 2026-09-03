@@ -3,7 +3,7 @@ import uvm_pkg::*;
 `include "tb/APB_if.sv"
 `include "APB_vip_pkg.sv"
 import APB_vip_pkg::*;
-module tb_top;
+module tb_top_loopback;
     logic PCLK;
     initial begin
         PCLK = 0;
@@ -26,6 +26,6 @@ module tb_top;
     end
     initial begin
         $dumpfile("dump.vcd");
-        $dumpvars(0, tb_top.vif, tb_top.PCLK);
+        $dumpvars(0, tb_top_loopback.vif, tb_top_loopback.PCLK);
     end
 endmodule
