@@ -49,9 +49,12 @@ class APB_slave_driver extends uvm_driver #(APB_sequence_item);
         vif.drv_slave_cb.PSLVERR <= 1'b0;
         vif.drv_slave_cb.PRUSER  <= 8'h0;
         vif.drv_slave_cb.PBUSER  <= 8'h0;
-        vif.drv_slave_cb.PRDATACHK <= 1'b0;
-        vif.drv_slave_cb.PREADYCHK <= 1'b0;
-    endtask
+        vif.drv_slave_cb.PRDATACHK <= 0;
+        vif.drv_slave_cb.PREADYCHK <= 0;
+        vif.drv_slave_cb.PSLVERRCHK <= 0;
+        vif.drv_slave_cb.PRUSERCHK <= 0;
+        vif.drv_slave_cb.PBUSERCHK <= 0;
+        endtask
 
     virtual task wait_for_setup();
         forever begin
@@ -74,19 +77,25 @@ class APB_slave_driver extends uvm_driver #(APB_sequence_item);
             if (req.wait_states > 0) begin
                 repeat (req.wait_states) begin
                     vif.drv_slave_cb.PREADY <= 1'b0;
+                    vif.drv_slave_cb.PREADYCHK <= 1'b0;
                     @(vif.drv_slave_cb);
                 end
             end
             vif.drv_slave_cb.PREADY <= 1'b1;
+            vif.drv_slave_cb.PREADYCHK <= 1'b1;
             vif.drv_slave_cb.PRUSER <= req.pruser;
+            vif.drv_slave_cb.PRUSERCHK <= calc_byte_parity(req.pruser, 2);
             vif.drv_slave_cb.PBUSER <= req.pbuser;
+            vif.drv_slave_cb.PBUSERCHK <= calc_byte_parity(req.pbuser, 2);
+
             if (req.pslverr) begin
                 vif.drv_slave_cb.PSLVERR <= 1'b1;
-                vif.drv_slave_cb.PREADYCHK <= ^{1'b1, 1'b1};
+                vif.drv_slave_cb.PSLVERRCHK <= 1'b1;
             end else begin
                 vif.drv_slave_cb.PSLVERR <= 1'b0;
-                vif.drv_slave_cb.PREADYCHK <= ^{1'b1, 1'b0};
+                vif.drv_slave_cb.PSLVERRCHK <= 1'b0;
             end
+
             if (vif.drv_slave_cb.PWRITE === 1'b1) begin
                 bit [31:0] current_data;
                 if (mem.exists(vif.drv_slave_cb.PADDR)) begin
@@ -102,14 +111,15 @@ class APB_slave_driver extends uvm_driver #(APB_sequence_item);
                 mem[vif.drv_slave_cb.PADDR] = current_data;
                 `uvm_info("DRV_SLAVE", $sformatf("Wrote 0x%0h to 0x%0h", current_data, vif.drv_slave_cb.PADDR), UVM_NONE)
             end else begin
+                logic [31:0] rdata;
                 if (mem.exists(vif.drv_slave_cb.PADDR)) begin
-                    vif.drv_slave_cb.PRDATA <= mem[vif.drv_slave_cb.PADDR];
-                    vif.drv_slave_cb.PRDATACHK <= ^mem[vif.drv_slave_cb.PADDR];
+                    rdata = mem[vif.drv_slave_cb.PADDR];
                 end else begin
-                    vif.drv_slave_cb.PRDATA <= 32'hDEADBEEF;
-                    vif.drv_slave_cb.PRDATACHK <= ^32'hDEADBEEF;
+                    rdata = 32'hDEADBEEF;
                 end
-                `uvm_info("DRV_SLAVE", $sformatf("Read 0x%0h from 0x%0h", vif.drv_slave_cb.PRDATA, vif.drv_slave_cb.PADDR), UVM_NONE)
+                vif.drv_slave_cb.PRDATA <= rdata;
+                vif.drv_slave_cb.PRDATACHK <= calc_byte_parity(rdata, 4);
+                `uvm_info("DRV_SLAVE", $sformatf("Read 0x%0h from 0x%0h", rdata, vif.drv_slave_cb.PADDR), UVM_NONE)
             end
         end
     endtask

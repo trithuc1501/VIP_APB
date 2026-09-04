@@ -1,6 +1,7 @@
 class APB_master_driver extends uvm_driver #(APB_sequence_item);
     `uvm_component_utils(APB_master_driver)
     virtual APB_if vif;
+    bit pwakeup_asserted = 0;
 
     function new(string name = "APB_master_driver", uvm_component parent = null);
         super.new(name, parent);
@@ -42,7 +43,14 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
         vif.drv_master_cb.PSEL    <= 1'b0;
         vif.drv_master_cb.PENABLE <= 1'b0;
         vif.drv_master_cb.PWAKEUP <= 1'b0;
-        vif.drv_master_cb.PADDRCHK  <= 1'b0;
+        pwakeup_asserted = 0;
+        vif.drv_master_cb.PADDRCHK  <= 0;
+        vif.drv_master_cb.PSELCHK <= 0;
+        vif.drv_master_cb.PENABLECHK <= 0;
+        vif.drv_master_cb.PSTRBCHK <= 0;
+        vif.drv_master_cb.PWAKEUPCHK <= 0;
+        vif.drv_master_cb.PAUSERCHK <= 0;
+        vif.drv_master_cb.PWUSERCHK <= 0;
         vif.drv_master_cb.PWDATACHK <= 1'b0;
         vif.drv_master_cb.PCTRLCHK  <= 1'b0;
         vif.drv_master_cb.PADDR <= 0;
@@ -57,10 +65,12 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
 
     virtual task drive_transaction(APB_sequence_item req);
         repeat (req.delay) @(vif.drv_master_cb);
-        if (vif.PWAKEUP !== 1'b1) begin
+        if (!pwakeup_asserted) begin
             vif.drv_master_cb.PWAKEUP <= 1'b1;
+            vif.drv_master_cb.PWAKEUPCHK <= 1'b1;
+            pwakeup_asserted = 1;
             @(vif.drv_master_cb);
-            @(vif.drv_master_cb); 
+            @(vif.drv_master_cb);
         end
         drive_setup_phase(req);
         drive_access_phase(req);
@@ -84,15 +94,21 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
             vif.drv_master_cb.PSTRB  <= 4'h0;
             vif.drv_master_cb.PWUSER <= 8'h0;
         end
-        vif.drv_master_cb.PADDRCHK  <= ^req.paddr;
-        vif.drv_master_cb.PWDATACHK <= (req.pwrite == APB_WRITE) ? ^req.pwdata : 1'b0;
-        vif.drv_master_cb.PCTRLCHK  <= ^{1'b1, 1'b0, req.pwrite};
+        vif.drv_master_cb.PADDRCHK  <= calc_byte_parity(req.paddr, 32/8);
+        vif.drv_master_cb.PWDATACHK <= (req.pwrite == APB_WRITE) ? calc_byte_parity(req.pwdata, 32/8) : 0;
+        vif.drv_master_cb.PCTRLCHK  <= ^{req.pprot, req.pwrite, req.pnse};
+        vif.drv_master_cb.PSELCHK   <= 1'b1;
+        vif.drv_master_cb.PENABLECHK <= 1'b0;
+        vif.drv_master_cb.PSTRBCHK  <= ^req.pstrb;
+        vif.drv_master_cb.PWAKEUPCHK <= pwakeup_asserted;
+        vif.drv_master_cb.PAUSERCHK <= calc_byte_parity(req.pauser, (8+7)/8);
+        vif.drv_master_cb.PWUSERCHK <= (req.pwrite == APB_WRITE) ? calc_byte_parity(req.pwuser, (8+7)/8) : 0;
         @(vif.drv_master_cb);
     endtask
 
     virtual task drive_access_phase(APB_sequence_item req);
         vif.drv_master_cb.PENABLE <= 1'b1;
-        vif.drv_master_cb.PCTRLCHK <= ^{1'b1, 1'b1, req.pwrite};
+        vif.drv_master_cb.PENABLECHK <= 1'b1;
     endtask
 
     virtual task wait_for_pready_and_finish(APB_sequence_item req);
@@ -112,7 +128,8 @@ class APB_master_driver extends uvm_driver #(APB_sequence_item);
         req.pbuser = vif.drv_master_cb.PBUSER;
         vif.drv_master_cb.PSEL    <= 1'b0;
         vif.drv_master_cb.PENABLE <= 1'b0;
-        vif.drv_master_cb.PCTRLCHK <= 1'b0;
+        vif.drv_master_cb.PSELCHK <= 1'b0;
+        vif.drv_master_cb.PENABLECHK <= 1'b0;
     endtask
 
 endclass

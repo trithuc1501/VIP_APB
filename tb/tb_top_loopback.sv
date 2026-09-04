@@ -1,7 +1,7 @@
 `include "uvm_macros.svh"
 import uvm_pkg::*;
-`include "tb/APB_if.sv"
 `include "APB_vip_pkg.sv"
+`include "tb/APB_if.sv"
 import APB_vip_pkg::*;
 
 module tb_top_loopback;

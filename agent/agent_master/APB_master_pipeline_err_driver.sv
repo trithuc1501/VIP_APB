@@ -9,8 +9,8 @@ class APB_master_pipeline_err_driver extends APB_master_driver;
         super.wait_for_pready_and_finish(req);
         `uvm_info("DRV_OVR", "FACTORY OVERRIDE: Holding PENABLE high after transfer!", UVM_LOW)
         vif.drv_master_cb.PSEL    <= 1'b1;
+        vif.drv_master_cb.PSELCHK <= 1'b1;
         vif.drv_master_cb.PENABLE <= 1'b1;
-        vif.drv_master_cb.PCTRLCHK <= ^{1'b1, 1'b1, req.pwrite};
+        vif.drv_master_cb.PENABLECHK <= 1'b1;
     endtask
-
 endclass

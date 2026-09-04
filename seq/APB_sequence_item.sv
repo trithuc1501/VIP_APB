@@ -21,7 +21,21 @@ class APB_sequence_item #(
     bit                              pslverr;
     bit [USER_DATA_WIDTH - 1:0]      pruser;
     bit [USER_RESP_WIDTH - 1:0]      pbuser;
-    rand int                         wait_states; 
+    bit [(ADDR_WIDTH/8)-1:0]         paddrchk;
+    bit                              pctrlchk;
+    bit                              pselchk;
+    bit                              penablechk;
+    bit [(DATA_WIDTH/8)-1:0]         pwdatachk;
+    bit                              pstrbchk;
+    bit                              preadychk;
+    bit [(DATA_WIDTH/8)-1:0]         prdatachk;
+    bit                              pslverrchk;
+    bit                              pwakeupchk;
+    bit [((USER_REQ_WIDTH+7)/8)-1:0] pauserchk;
+    bit [((USER_DATA_WIDTH+7)/8)-1:0] pwuserchk;
+    bit [((USER_DATA_WIDTH+7)/8)-1:0] pruserchk;
+    bit [((USER_RESP_WIDTH+7)/8)-1:0] pbuserchk;
+    rand int                         wait_states;
     `uvm_object_param_utils_begin(APB_sequence_item#(ADDR_WIDTH, DATA_WIDTH, USER_REQ_WIDTH, USER_DATA_WIDTH, USER_RESP_WIDTH))
         `uvm_field_int (paddr,       UVM_ALL_ON | UVM_HEX)
         `uvm_field_enum(apb_direction_e, pwrite, UVM_ALL_ON)
@@ -36,6 +50,20 @@ class APB_sequence_item #(
         `uvm_field_int (pslverr,     UVM_ALL_ON | UVM_BIN)
         `uvm_field_int (pruser,      UVM_ALL_ON | UVM_HEX)
         `uvm_field_int (pbuser,      UVM_ALL_ON | UVM_HEX)
+        `uvm_field_int (paddrchk,    UVM_ALL_ON | UVM_HEX)
+        `uvm_field_int (pctrlchk,    UVM_ALL_ON | UVM_BIN)
+        `uvm_field_int (pselchk,     UVM_ALL_ON | UVM_BIN)
+        `uvm_field_int (penablechk,  UVM_ALL_ON | UVM_BIN)
+        `uvm_field_int (pwdatachk,   UVM_ALL_ON | UVM_HEX)
+        `uvm_field_int (pstrbchk,    UVM_ALL_ON | UVM_BIN)
+        `uvm_field_int (preadychk,   UVM_ALL_ON | UVM_BIN)
+        `uvm_field_int (prdatachk,   UVM_ALL_ON | UVM_HEX)
+        `uvm_field_int (pslverrchk,  UVM_ALL_ON | UVM_BIN)
+        `uvm_field_int (pwakeupchk,  UVM_ALL_ON | UVM_BIN)
+        `uvm_field_int (pauserchk,   UVM_ALL_ON | UVM_HEX)
+        `uvm_field_int (pwuserchk,   UVM_ALL_ON | UVM_HEX)
+        `uvm_field_int (pruserchk,   UVM_ALL_ON | UVM_HEX)
+        `uvm_field_int (pbuserchk,   UVM_ALL_ON | UVM_HEX)
         `uvm_field_int (delay,       UVM_ALL_ON | UVM_DEC | UVM_NOCOMPARE)
         `uvm_field_int (wait_states, UVM_ALL_ON | UVM_DEC | UVM_NOCOMPARE)
     `uvm_object_utils_end

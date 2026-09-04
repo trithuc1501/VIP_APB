@@ -12,6 +12,7 @@ class APB_master_psel_drop_err_driver extends APB_master_driver;
             timeout_cnt++;
             `uvm_info("DRV_OVR", "FACTORY OVERRIDE: Dropping PSEL during wait states!", UVM_LOW)
             vif.drv_master_cb.PSEL <= 1'b0;
+            vif.drv_master_cb.PSELCHK <= 1'b0;
             if (timeout_cnt >= 100) break;
         end while (vif.drv_master_cb.PREADY === 1'b0);
         if (req.pwrite == APB_READ) begin
@@ -20,8 +21,8 @@ class APB_master_psel_drop_err_driver extends APB_master_driver;
         end
         req.pbuser = vif.drv_master_cb.PBUSER;
         vif.drv_master_cb.PSEL    <= 1'b0;
+        vif.drv_master_cb.PSELCHK <= 1'b0;
         vif.drv_master_cb.PENABLE <= 1'b0;
-        vif.drv_master_cb.PCTRLCHK <= 1'b0;
+        vif.drv_master_cb.PENABLECHK <= 1'b0;
     endtask
-
 endclass

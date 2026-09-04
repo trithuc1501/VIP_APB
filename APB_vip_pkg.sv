@@ -1,4 +1,13 @@
 package APB_vip_pkg;
+
+    function automatic logic [31:0] calc_byte_parity(logic [255:0] val, int bytes_num);
+        logic [31:0] chk = 0;
+        for (int i = 0; i < bytes_num; i++) begin
+            chk[i] = ^val[i*8 +: 8];
+        end
+        return chk;
+    endfunction
+
     import uvm_pkg::*;
     `include "uvm_macros.svh"
     `include "seq/APB_sequence_item.sv"

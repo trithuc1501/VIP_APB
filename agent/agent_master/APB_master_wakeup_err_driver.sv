@@ -8,13 +8,14 @@ class APB_master_wakeup_err_driver extends APB_master_driver;
     virtual task drive_transaction(APB_sequence_item req);
         repeat (req.delay) @(vif.drv_master_cb);
         `uvm_info("DRV_OVR", "FACTORY OVERRIDE: Asserting PWAKEUP and PSEL simultaneously!", UVM_LOW)
-        if (vif.PWAKEUP !== 1'b1) begin
+        if (!pwakeup_asserted) begin
             @(vif.drv_master_cb); 
             vif.drv_master_cb.PWAKEUP <= 1'b1;
+            vif.drv_master_cb.PWAKEUPCHK <= 1'b1;
+            pwakeup_asserted = 1;
         end
         drive_setup_phase(req);
         drive_access_phase(req);
         wait_for_pready_and_finish(req);
     endtask
-
 endclass

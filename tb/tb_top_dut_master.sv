@@ -13,7 +13,8 @@ module tb_top_dut_master;
     end
     APB_if #(
         .ADDR_WIDTH(32),
-        .DATA_WIDTH(32)
+        .DATA_WIDTH(32),
+        .ENABLE_PARITY_CHECK(0)
     ) vif(
         .PCLK(PCLK)
     );
